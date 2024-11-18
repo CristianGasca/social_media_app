@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:music_player_app/pages/settings_page.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
@@ -6,7 +7,7 @@ class MyDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       child: Column(
         children: [
           // logo
@@ -20,9 +21,12 @@ class MyDrawer extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 25.0, top: 25),
             child: ListTile(
-              title: const Text('HOME'),
+              title: const Text('HOME', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),),
               leading: const Icon(Icons.home),
-              onTap: (){},
+              iconColor: Colors.grey,
+              onTap: (){
+                Navigator.pop(context);
+              },
             ),
           ),
 
@@ -30,9 +34,16 @@ class MyDrawer extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 25.0, top: 0),
             child: ListTile(
-              title: const Text('SETTINGS'),
+              title: const Text('SETTINGS', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),),
               leading: const Icon(Icons.settings),
-              onTap: (){},
+              iconColor: Colors.grey,
+              onTap: (){
+                //pop brawer
+                Navigator.pop(context);
+
+                //naviaget to settings page 
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsPage(),));
+              },
             ),
           )
 
