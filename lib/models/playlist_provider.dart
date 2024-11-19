@@ -80,6 +80,12 @@ class PlaylistProvider extends ChangeNotifier{
   S E T T E R S
   */
 
+  set currentSongIndex(int? newIndex) {
+    _currentSongIndex = newIndex;
+
+    notifyListeners();
+  }
+
 
 
 
