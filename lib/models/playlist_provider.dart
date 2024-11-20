@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:music_player_app/models/song.dart';
 
@@ -8,7 +9,7 @@ class PlaylistProvider extends ChangeNotifier{
     Song(SongName: 'Ahora te puedes marchar', 
     ArtistName: 'Luis Miguel',
      albumArtImagePath: 'assets/images/Ahora_te_puedes_marchar.jpg',
-      audioPath: 'song/ahora_te_puedes_marchar.mp3'),
+      audioPath: 'song/ahora_te_puedes_marcahar.mp3'),
     // cancion 2
     Song(SongName: 'Bad', 
     ArtistName: 'Michael Jackson',
@@ -33,7 +34,7 @@ class PlaylistProvider extends ChangeNotifier{
     Song(SongName: 'Eternal Sunshine', 
     ArtistName: 'Ariana Grande',
      albumArtImagePath: 'assets/images/eternal_sunshine.jpg',
-      audioPath: 'song/eternal sunshine.mp3'),
+      audioPath: 'song/eternal sunshie.mp3'),
     // cancion7
     Song(SongName: "What I've Done", 
     ArtistName: 'Linkin Park',
@@ -43,7 +44,7 @@ class PlaylistProvider extends ChangeNotifier{
     Song(SongName: 'Me enamoré en la cola de tortillas', 
     ArtistName: 'Los Estrambóticos',
      albumArtImagePath: 'assets/images/me_enamore_en_la_cola_de_las_tortillas.jpg',
-      audioPath: 'song/me enamore en la cola de las tortillas.mp3'),
+      audioPath: 'song/Me enamore en la cola de las tortillas.mp3'),
     // cancion9
     Song(SongName: 'Mi cucú', 
     ArtistName: 'La Sonora Dinamita',
@@ -69,12 +70,119 @@ class PlaylistProvider extends ChangeNotifier{
   //current song
   int? _currentSongIndex;
 
+  //A U D I O P L A Y E R 
+
+  //audio player 
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  // durations
+  Duration _currentDuration = Duration.zero;
+  Duration _totalDuration = Duration.zero;
+  //constructor
+  PlaylistProvider() {
+    listenToDuration();
+  }
+  // initialliy not playing
+  bool _isPlaying = false;
+
+  //play the song
+  void play() async{
+    final String path = _playList[_currentSongIndex!].audioPath;
+    await _audioPlayer.stop();
+    await _audioPlayer.play(AssetSource(  path));
+    _isPlaying = true;
+    notifyListeners();
+  }
+  // pause current song 
+  void pause() async {
+    await _audioPlayer.pause();
+    _isPlaying = false;
+    notifyListeners();
+  }
+
+  //resume the song
+  void resume() async {
+    await _audioPlayer.resume();
+    _isPlaying = false;
+    notifyListeners();
+  }
+
+  //pause or resume
+  void pauseOrResume() async{
+    if (_isPlaying){
+      pause();
+    } else {
+      resume();
+    }
+    notifyListeners();
+  }
+
+  //seek to a specific position in the current song
+  void seek(Duration position) async{
+    await _audioPlayer.seek(  position);
+  }
+
+  //play next song 
+  void playNextSong() {
+    if (_currentSongIndex!= null){
+      if (_currentSongIndex! < _playList.length -1){
+        // go to song if it's not the last song
+        currentSongIndex = _currentSongIndex! + 1;
+      } else{
+        //if it's the last song, loop back to the first song
+        currentSongIndex = 0;
+      }
+    }
+  }
+
+  //play previus song 
+  void playPreviousSong() async{
+    //if more tha 2 seconds have passed, restart the current song
+    if (_currentDuration.inSeconds >2) {
+      seek(Duration.zero);
+      //if it's within first 2s of the song, go to previus song
+
+    }
+    else{
+      if(_currentSongIndex!>0) {
+        currentSongIndex = _currentSongIndex! -1;
+      } else{
+        //if it's the first song, loop back to last song
+        currentSongIndex = _playList.length -1;
+      }
+    }
+  }
+
+  //listen to duration 
+  void listenToDuration() {
+
+    // listen for total duration
+    _audioPlayer.onDurationChanged.listen((newDuration){
+      _totalDuration = newDuration;
+      notifyListeners();
+    });
+
+    //lisetn forcurrent duration 
+    _audioPlayer.onPositionChanged.listen((newPosition){
+      _currentDuration = newPosition;
+      notifyListeners();
+    });
+    //listen for song completion
+    _audioPlayer.onPlayerComplete.listen((event) {
+      playNextSong();
+    });
+
+  }
+
+
   /*
   G E T  T E R S
   */
 
   List<Song> get playlist => _playList;
   int? get currentSongIndex => _currentSongIndex;
+  bool get isPlaying => _isPlaying;
+  Duration get currentDuration => _currentDuration;
+  Duration get totalDuration => _totalDuration;
 
   /* 
   S E T T E R S
@@ -82,6 +190,11 @@ class PlaylistProvider extends ChangeNotifier{
 
   set currentSongIndex(int? newIndex) {
     _currentSongIndex = newIndex;
+
+    if(newIndex != null){
+      play(); //play the song at the new index
+
+    }
 
     notifyListeners();
   }
