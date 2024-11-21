@@ -43,7 +43,7 @@ class PlaylistProvider extends ChangeNotifier{
     // cancion 8
     Song(SongName: 'Me enamoré en la cola de tortillas', 
     ArtistName: 'Los Estrambóticos',
-     albumArtImagePath: 'assets/images/me_enamore_en_la_cola_de_las_tortillas.jpg',
+     albumArtImagePath: 'assets/images/me_enamore_en_la_cola_de_las_tortillas.jpg', 
       audioPath: 'song/Me enamore en la cola de las tortillas.mp3'),
     // cancion9
     Song(SongName: 'Mi cucú', 
